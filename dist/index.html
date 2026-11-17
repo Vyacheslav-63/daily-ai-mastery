@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Daily AI Mastery — Скачать Android APK</title>
-  <link rel="icon" type="image/jpeg" href="./icon.jpg" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090D16'/%3E%3Cpath d='M32 10L52 24L44 50H20L12 24L32 10Z' fill='none' stroke='%2300F2FE' stroke-width='3'/%3E%3Cpath d='M32 18L43 27L38 43H26L21 27L32 18Z' fill='%238B5CF6' fill-opacity='0.6' stroke='%2300F2FE' stroke-width='2'/%3E%3C/svg%3E" />
   <style>
     :root {
       --bg: #090D16;
@@ -16,6 +16,9 @@
       --text: #FFFFFF;
       --muted: #94A3B8;
       --border: rgba(255, 255, 255, 0.1);
+      --warn-bg: rgba(245, 158, 11, 0.12);
+      --warn-border: rgba(245, 158, 11, 0.45);
+      --warn-text: #FCD34D;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -56,10 +59,13 @@
       width: 72px;
       height: 72px;
       border-radius: 18px;
-      object-fit: cover;
       border: 1px solid rgba(0, 242, 254, 0.4);
       box-shadow: 0 0 24px rgba(0, 242, 254, 0.25);
       flex-shrink: 0;
+      background: linear-gradient(145deg, #0D1426 0%, #16102E 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .badge {
       display: inline-block;
@@ -115,10 +121,29 @@
       font-size: 16px;
       text-decoration: none;
       box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
-      transition: transform 0.12s ease;
+      transition: transform 0.12s ease, opacity 0.15s ease;
     }
     .download-btn:active {
       transform: scale(0.98);
+    }
+    .download-btn.disabled {
+      opacity: 0.55;
+      pointer-events: none;
+      box-shadow: none;
+    }
+    .status-banner {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .status-banner.visible {
+      display: block;
     }
     h2 {
       font-size: 16px;
@@ -163,7 +188,13 @@
   <main class="container">
     <section class="card">
       <div class="hero">
-        <img src="./icon.jpg" alt="Daily AI Mastery" class="app-icon" />
+        <div class="app-icon" aria-label="Daily AI Mastery">
+          <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 6L56 22L47 54H17L8 22L32 6Z" stroke="#00F2FE" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M32 16L45 26L40 44H24L19 26L32 16Z" fill="#8B5CF6" fill-opacity="0.45" stroke="#00F2FE" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="32" cy="31" r="4.5" fill="#00F2FE"/>
+          </svg>
+        </div>
         <div>
           <span class="badge">ANDROID APK • v1.0</span>
           <h1>Daily AI Mastery</h1>
@@ -177,9 +208,14 @@
         <span class="meta-chip">~28 MB</span>
         <span class="meta-chip">Firebase + Custom Proxy</span>
       </div>
-      <a class="download-btn" href="./daily-ai-mastery.apk" download="daily-ai-mastery.apk">
+      <a id="apk-link" class="download-btn" href="./daily-ai-mastery.apk" download="daily-ai-mastery.apk">
         <span>Скачать APK для Android</span>
       </a>
+      <div id="apk-missing" class="status-banner" role="alert">
+        <strong>Файл APK не найден на сервере (404).</strong><br />
+        При деплое на Netlify загрузились только HTML и конфигурация, без бинарного файла <code>daily-ai-mastery.apk</code>.
+        Чтобы ссылка работала, скачайте готовый APK через меню <strong>Settings → Generate APK</strong> в AI Studio (или из папки <code>dist</code>) и загрузите его на Netlify Drop вместе с <code>index.html</code>.
+      </div>
     </section>
 
     <section class="card">
@@ -194,5 +230,21 @@
       </p>
     </section>
   </main>
+  <script>
+    (function () {
+      if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+      var btn = document.getElementById('apk-link');
+      var warn = document.getElementById('apk-missing');
+      fetch('./daily-ai-mastery.apk', { method: 'HEAD', cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) {
+            btn.classList.add('disabled');
+            btn.querySelector('span').textContent = 'APK отсутствует в этом деплое (404)';
+            warn.classList.add('visible');
+          }
+        })
+        .catch(function () {});
+    })();
+  </script>
 </body>
 </html>
