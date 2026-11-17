@@ -1,0 +1,190 @@
+{
+  "entities": {
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "Tracks daily AI mastery progression, streak, XP, quiz accuracy, and 24-hour unlock schedule for an authenticated user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase UID of the user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name shown in the profile header."
+        },
+        "currentDay": {
+          "type": "integer",
+          "description": "Current active day number unlocked for the user (starting at 1)."
+        },
+        "highestCompletedDay": {
+          "type": "integer",
+          "description": "Highest day number completed by the user."
+        },
+        "streakDays": {
+          "type": "integer",
+          "description": "Consecutive daily learning streak count."
+        },
+        "totalXp": {
+          "type": "integer",
+          "description": "Accumulated mastery XP."
+        },
+        "correctAnswers": {
+          "type": "integer",
+          "description": "Total number of correctly answered quiz questions."
+        },
+        "totalAnswers": {
+          "type": "integer",
+          "description": "Total number of answered quiz questions."
+        },
+        "nextUnlockEpochMs": {
+          "type": "integer",
+          "description": "Epoch timestamp in milliseconds when the next daily lesson unlocks."
+        },
+        "yesterdayQuizPassedForDay": {
+          "type": "integer",
+          "description": "Day number whose prerequisite review quiz from the previous day has been passed."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on each update."
+        }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "currentDay",
+        "highestCompletedDay",
+        "streakDays",
+        "totalXp",
+        "correctAnswers",
+        "totalAnswers",
+        "nextUnlockEpochMs",
+        "yesterdayQuizPassedForDay",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LessonRecord": {
+      "title": "LessonRecord",
+      "description": "Stores a daily lesson, cached Deep Dive explanation, daily review question, or Day-7 weekly consolidated assessment.",
+      "type": "object",
+      "properties": {
+        "dayNumber": {
+          "type": "integer",
+          "description": "Sequential curriculum day number."
+        },
+        "topic": {
+          "type": "string",
+          "description": "Title of the lesson or weekly assessment."
+        },
+        "category": {
+          "type": "string",
+          "description": "Topic category badge such as NETWORKING, PROXY, SECURITY, MCP, or ASSESSMENT."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Short summary of the lesson."
+        },
+        "content": {
+          "type": "string",
+          "description": "Structured educational content for the lesson."
+        },
+        "question": {
+          "type": "string",
+          "description": "Daily check-in review question based on this lesson."
+        },
+        "options": {
+          "type": "array",
+          "description": "Answer choices for the daily question."
+        },
+        "correctAnswerIndex": {
+          "type": "integer",
+          "description": "Zero-based index of the correct answer option."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "Explanation displayed after answering the quiz."
+        },
+        "deepDiveContent": {
+          "type": "string",
+          "description": "Extended AI-generated Deep Dive technical breakdown with architecture and code examples."
+        },
+        "weeklyAssessment": {
+          "type": "boolean",
+          "description": "True when this day is a 7th-day consolidated weekly assessment."
+        },
+        "weeklyQuestions": {
+          "type": "array",
+          "description": "List of consolidated assessment questions for every 7th day."
+        },
+        "xpReward": {
+          "type": "integer",
+          "description": "XP awarded upon completing this day."
+        },
+        "estimatedMinutes": {
+          "type": "integer",
+          "description": "Estimated reading time in minutes."
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether the user has completed this day."
+        },
+        "quizScore": {
+          "type": "integer",
+          "description": "Score achieved on the assessment or quiz."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on each update."
+        }
+      },
+      "required": [
+        "dayNumber",
+        "topic",
+        "category",
+        "summary",
+        "content",
+        "question",
+        "options",
+        "correctAnswerIndex",
+        "explanation",
+        "deepDiveContent",
+        "weeklyAssessment",
+        "weeklyQuestions",
+        "xpReward",
+        "estimatedMinutes",
+        "completed",
+        "quizScore",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProgress"
+      },
+      "description": "Per-user learning progress and streak document isolated by Firebase Auth UID."
+    },
+    "/users/{userId}/lessons/{lessonId}": {
+      "schema": {
+        "$ref": "#/entities/LessonRecord"
+      },
+      "description": "Per-user daily lessons, cached Deep Dive expansions, and Day-7 weekly assessments."
+    }
+  }
+}

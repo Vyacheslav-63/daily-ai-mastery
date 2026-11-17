@@ -1,0 +1,184 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidUserProgress(data) {
+      return data.userId is string &&
+             data.userId.size() >= 1 &&
+             data.userId.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.displayName is string &&
+             data.displayName.size() <= 100 &&
+             data.currentDay is int &&
+             data.currentDay >= 1 &&
+             data.currentDay <= 3650 &&
+             data.highestCompletedDay is int &&
+             data.highestCompletedDay >= 0 &&
+             data.highestCompletedDay <= 3650 &&
+             data.streakDays is int &&
+             data.streakDays >= 0 &&
+             data.streakDays <= 3650 &&
+             data.totalXp is int &&
+             data.totalXp >= 0 &&
+             data.totalXp <= 10000000 &&
+             data.correctAnswers is int &&
+             data.correctAnswers >= 0 &&
+             data.correctAnswers <= 100000 &&
+             data.totalAnswers is int &&
+             data.totalAnswers >= 0 &&
+             data.totalAnswers <= 100000 &&
+             data.correctAnswers <= data.totalAnswers &&
+             data.nextUnlockEpochMs is int &&
+             data.nextUnlockEpochMs >= 0 &&
+             data.yesterdayQuizPassedForDay is int &&
+             data.yesterdayQuizPassedForDay >= 0 &&
+             data.yesterdayQuizPassedForDay <= 3650;
+    }
+
+    function isValidLessonRecord(data) {
+      return data.dayNumber is int &&
+             data.dayNumber >= 1 &&
+             data.dayNumber <= 3650 &&
+             data.topic is string &&
+             data.topic.size() >= 1 &&
+             data.topic.size() <= 240 &&
+             data.category is string &&
+             data.category.size() >= 1 &&
+             data.category.size() <= 80 &&
+             data.summary is string &&
+             data.summary.size() <= 1000 &&
+             data.content is string &&
+             data.content.size() >= 1 &&
+             data.content.size() <= 35000 &&
+             data.question is string &&
+             data.question.size() <= 1500 &&
+             data.options is list &&
+             data.options.size() <= 6 &&
+             (data.options.size() == 0 || data.options[0] is string) &&
+             data.correctAnswerIndex is int &&
+             data.correctAnswerIndex >= 0 &&
+             data.correctAnswerIndex <= 5 &&
+             data.explanation is string &&
+             data.explanation.size() <= 3000 &&
+             data.deepDiveContent is string &&
+             data.deepDiveContent.size() <= 45000 &&
+             data.weeklyAssessment is bool &&
+             data.weeklyQuestions is list &&
+             data.weeklyQuestions.size() <= 10 &&
+             data.xpReward is int &&
+             data.xpReward >= 0 &&
+             data.xpReward <= 5000 &&
+             data.estimatedMinutes is int &&
+             data.estimatedMinutes >= 1 &&
+             data.estimatedMinutes <= 120 &&
+             data.completed is bool &&
+             data.quizScore is int &&
+             data.quizScore >= 0 &&
+             data.quizScore <= 10;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(userId);
+      allow list: if isSignedIn() && request.auth.uid == userId;
+
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(userId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'displayName', 'currentDay', 'highestCompletedDay',
+                         'streakDays', 'totalXp', 'correctAnswers', 'totalAnswers',
+                         'nextUnlockEpochMs', 'yesterdayQuizPassedForDay',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'displayName', 'currentDay', 'highestCompletedDay',
+                         'streakDays', 'totalXp', 'correctAnswers', 'totalAnswers',
+                         'nextUnlockEpochMs', 'yesterdayQuizPassedForDay',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       isValidUserProgress(incoming());
+
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       isValidUserProgress(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'displayName', 'currentDay', 'highestCompletedDay',
+                         'streakDays', 'totalXp', 'correctAnswers', 'totalAnswers',
+                         'nextUnlockEpochMs', 'yesterdayQuizPassedForDay', 'updatedAt'
+                       ]);
+
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(userId);
+
+      match /lessons/{lessonId} {
+        allow get: if isSignedIn() && request.auth.uid == userId && isValidId(lessonId);
+        allow list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(lessonId) &&
+                         incoming().keys().hasAll([
+                           'dayNumber', 'topic', 'category', 'summary', 'content',
+                           'question', 'options', 'correctAnswerIndex', 'explanation',
+                           'deepDiveContent', 'weeklyAssessment', 'weeklyQuestions',
+                           'xpReward', 'estimatedMinutes', 'completed', 'quizScore',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'dayNumber', 'topic', 'category', 'summary', 'content',
+                           'question', 'options', 'correctAnswerIndex', 'explanation',
+                           'deepDiveContent', 'weeklyAssessment', 'weeklyQuestions',
+                           'xpReward', 'estimatedMinutes', 'completed', 'quizScore',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().createdAt is timestamp &&
+                         incoming().createdAt <= request.time &&
+                         incoming().updatedAt is timestamp &&
+                         incoming().updatedAt <= request.time &&
+                         isValidLessonRecord(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(lessonId) &&
+                         incoming().dayNumber == existing().dayNumber &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().updatedAt is timestamp &&
+                         incoming().updatedAt <= request.time &&
+                         isValidLessonRecord(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'deepDiveContent', 'completed', 'quizScore',
+                           'weeklyQuestions', 'updatedAt'
+                         ]);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(lessonId);
+      }
+    }
+  }
+}

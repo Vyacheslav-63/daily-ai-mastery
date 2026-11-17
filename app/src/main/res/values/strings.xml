@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">Daily AI Mastery</string>
+    <string name="app_tagline">Ежедневное погружение в ИИ, агентов и архитектуру LLM</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_daily">Сегодня</string>
+    <string name="tab_curriculum">Курс</string>
+    <string name="tab_sandbox">Песочница</string>
+    <string name="tab_profile">Профиль</string>
+
+    <!-- Auth -->
+    <string name="auth_title">Daily AI Mastery</string>
+    <string name="auth_subtitle">1 урок в день. Закрепление тестом. Динамический ИИ-трек и поддержка кастомных прокси.</string>
+    <string name="auth_sign_in_google">Войти через Google</string>
+    <string name="auth_signing_in">Авторизация…</string>
+    <string name="auth_pillar_daily">Микрообучение раз в 24 часа</string>
+    <string name="auth_pillar_ai">Deep Dive и уроки на базе Gemini</string>
+    <string name="auth_pillar_proxy">Маршрутизация через свой Proxy / API-ключ</string>
+
+    <!-- Daily Screen -->
+    <string name="daily_deep_dive_cta">Углубиться в тему (Deep Dive)</string>
+    <string name="daily_deep_dive_generating">Генерация технического разбора…</string>
+    <string name="daily_deep_dive_title">Deep Dive • Технический разбор</string>
+    <string name="daily_complete_lesson">Завершить урок (+%1$d XP)</string>
+    <string name="daily_lesson_completed">Урок завершён</string>
+    <string name="daily_gate_badge">ПРОВЕРКА ЗНАНИЙ • ДЕНЬ %1$d</string>
+    <string name="daily_gate_title">Закрепим вчерашний материал</string>
+    <string name="daily_gate_subtitle">Ответьте на 1 вопрос по уроку «%1$s», чтобы открыть День %2$d.</string>
+    <string name="daily_gate_continue">Открыть урок дня %1$d</string>
+    <string name="daily_locked_title">Следующий урок готовится</string>
+    <string name="daily_locked_subtitle">Строгий ритм микрообучения: 1 новый модуль каждые 24 часа для устойчивого усвоения.</string>
+    <string name="daily_weekly_badge">ЕЖЕНЕДЕЛЬНЫЙ СРЕЗ • ДЕНЬ %1$d</string>
+    <string name="daily_weekly_submit">Завершить срез знаний</string>
+    <string name="daily_retry">Повторить</string>
+
+    <!-- Sandbox -->
+    <string name="sandbox_title">AI Песочница &amp; Прокси</string>
+    <string name="sandbox_prompt_hint">Введите промпт или задачу для проверки модели…</string>
+    <string name="sandbox_run">Запустить</string>
+    <string name="sandbox_test_connection">Проверить канал</string>
+
+    <!-- Profile & Settings -->
+    <string name="profile_settings_title">API-ключ и обход блокировок</string>
+    <string name="profile_security_note">Персональный API-ключ и Proxy Base URL сохраняются исключительно локально на устройстве (DataStore) и никогда не отправляются на серверы разработчика.</string>
+    <string name="profile_api_key_label">Свой Gemini API-ключ (опционально)</string>
+    <string name="profile_proxy_url_label">Кастомный Proxy / Base URL (например, Cloudflare Workers)</string>
+    <string name="profile_model_label">Модель для прямого REST/Proxy (по умолчанию gemini-2.5-flash)</string>
+    <string name="profile_save_settings">Сохранить настройки</string>
+    <string name="profile_reset_settings">Сбросить (Firebase AI по умолчанию)</string>
+    <string name="profile_sign_out">Выйти из аккаунта</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_hero_banner">Иллюстрация нейронной сети Daily AI Mastery</string>
+    <string name="cd_weekly_banner">Иллюстрация еженедельного среза знаний</string>
+    <string name="cd_copy_code">Копировать код</string>
+    <string name="cd_toggle_visibility">Показать или скрыть ключ</string>
+    <string name="cd_close">Закрыть</string>
+</resources>
